@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="../titans_admin.API/titans_admin.API.csproj" Id="397e89e6-0225-4f52-b911-9f92445eef84" />
+  <Project Path="titans_admin.csproj" />
+</Solution>

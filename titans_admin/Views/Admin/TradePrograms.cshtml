@@ -1,0 +1,196 @@
+@model List<titans_admin.Models.ViewModels.TradeProgramListViewModel>
+@{
+    ViewData["Title"] = "Trade Programs";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<!-- Page Header -->
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
+    <div class="mb-3 mb-md-0">
+        <h1 class="h3 mb-1">
+            <i class="fas fa-briefcase me-2 text-primary"></i>
+            Trade Program Management
+        </h1>
+        <p class="text-muted mb-0">Manage trade programs, subsidies, and incentives</p>
+    </div>
+    <a asp-action="CreateTradeProgram" class="btn btn-primary">
+        <i class="fas fa-plus me-2"></i>Create New Program
+    </a>
+</div>
+
+<!-- Alerts -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<!-- Filter Card -->
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-12 col-md-8">
+                <div class="input-group">
+                    <span class="input-group-text bg-light"><i class="fas fa-search"></i></span>
+                    <input type="text" id="searchInput" class="form-control" placeholder="Search programs...">
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <select id="statusFilter" class="form-select">
+                    <option value="">All Statuses</option>
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Completed">Completed</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Programs Grid -->
+<div class="row g-4" id="programsGrid">
+    @if (Model != null && Model.Any())
+    {
+        @foreach (var program in Model)
+        {
+            var isActive = program.Status == "Active";
+            <div class="col-12 col-md-6 col-xl-4 program-card" data-status="@program.Status">
+                <div class="card h-100 @(isActive ? "border-success" : "")">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0 fw-bold text-truncate" title="@program.ProgramName">
+                            @program.ProgramName
+                        </h6>
+                        @{
+                            var statusClass = program.Status switch
+                            {
+                                "Active" => "bg-success",
+                                "Inactive" => "bg-secondary",
+                                "Pending" => "bg-warning text-dark",
+                                "Completed" => "bg-info",
+                                _ => "bg-dark"
+                            };
+                        }
+                        <span class="badge @statusClass">@program.Status</span>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted small mb-3">
+                            @(string.IsNullOrEmpty(program.Description) ? "No description available" : 
+                              (program.Description.Length > 100 ? program.Description.Substring(0, 100) + "..." : program.Description))
+                        </p>
+                        
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <small class="text-muted d-block">Type</small>
+                                <span class="badge bg-light text-dark">@(program.ProgramType ?? "N/A")</span>
+                            </div>
+                            <div class="col-6">
+                                <small class="text-muted d-block">Budget</small>
+                                <span class="fw-medium">
+                                    @(program.Budget.HasValue ? program.Budget.Value.ToString("C0") : "N/A")
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <small class="text-muted d-block">Start Date</small>
+                                <span class="fw-medium">@program.StartDate.ToString("MMM dd, yyyy")</span>
+                            </div>
+                            <div class="col-6">
+                                <small class="text-muted d-block">End Date</small>
+                                <span class="fw-medium">
+                                    @(program.EndDate.HasValue ? program.EndDate.Value.ToString("MMM dd, yyyy") : "Ongoing")
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-clipboard-check text-muted me-2"></i>
+                            <span class="small">@program.ComplianceRecordCount compliance records</span>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent d-flex gap-2">
+                        <a asp-action="EditTradeProgram" asp-route-id="@program.TradeProgramId" 
+                           class="btn btn-sm btn-outline-primary flex-grow-1">
+                            <i class="fas fa-edit me-1"></i>Edit
+                        </a>
+                        <button type="button" class="btn btn-sm btn-outline-danger" 
+                                onclick="confirmDelete(@program.TradeProgramId, '@program.ProgramName')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-briefcase fa-3x text-muted mb-3"></i>
+                    <p class="text-muted mb-3">No trade programs found</p>
+                    <a asp-action="CreateTradeProgram" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus me-1"></i>Create First Program
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('searchInput').addEventListener('keyup', filterCards);
+        document.getElementById('statusFilter').addEventListener('change', filterCards);
+
+        function filterCards() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const status = document.getElementById('statusFilter').value;
+            const cards = document.querySelectorAll('.program-card');
+
+            cards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                const cardStatus = card.dataset.status;
+
+                const matchesSearch = text.includes(search);
+                const matchesStatus = !status || cardStatus === status;
+
+                card.style.display = (matchesSearch && matchesStatus) ? '' : 'none';
+            });
+        }
+
+        function confirmDelete(id, name) {
+            if (confirm(`Are you sure you want to delete program "${name}"?\n\nThis will also delete all associated compliance records.`)) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '@Url.Action("DeleteTradeProgram", "Admin")';
+
+                const idInput = document.createElement('input');
+                idInput.type = 'hidden';
+                idInput.name = 'id';
+                idInput.value = id;
+                form.appendChild(idInput);
+
+                const tokenInput = document.createElement('input');
+                tokenInput.type = 'hidden';
+                tokenInput.name = '__RequestVerificationToken';
+                tokenInput.value = document.querySelector('input[name="__RequestVerificationToken"]').value;
+                form.appendChild(tokenInput);
+
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+    </script>
+}

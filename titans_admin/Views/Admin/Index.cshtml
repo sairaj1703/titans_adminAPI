@@ -1,0 +1,124 @@
+@model titans_admin.Models.ViewModels.AdminDashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="mb-4">
+    <h4 class="mb-1">Dashboard</h4>
+    <p class="text-muted small mb-0">TradeNet Administration Overview</p>
+</div>
+
+<!-- Stats Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-lg-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="stat-label">Trade Licenses</div>
+                <div class="stat-value">@Model.TotalTradeLicenses</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="stat-label">Active Programs</div>
+                <div class="stat-value">@Model.ActivePrograms</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="stat-label">Transactions</div>
+                <div class="stat-value">@Model.TotalTransactions</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="stat-label">Violations</div>
+                <div class="stat-value">@Model.ViolationCounter</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="card mb-4">
+    <div class="card-header">Quick Actions</div>
+    <div class="card-body">
+        <div class="d-flex flex-wrap gap-2">
+            <a asp-action="CreateUser" class="btn btn-outline-primary btn-sm">
+                <i class="fas fa-user-plus me-1"></i>New User
+            </a>
+            <a asp-action="CreateTradeLicense" class="btn btn-outline-primary btn-sm">
+                <i class="fas fa-file-alt me-1"></i>New License
+            </a>
+            <a asp-action="CreateTradeProgram" class="btn btn-outline-primary btn-sm">
+                <i class="fas fa-briefcase me-1"></i>New Program
+            </a>
+            <a asp-action="CreateComplianceRecord" class="btn btn-outline-primary btn-sm">
+                <i class="fas fa-clipboard-check me-1"></i>New Compliance Record
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Users -->
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span>Recent Users</span>
+        <a asp-action="Users" class="btn btn-sm btn-outline-primary">View All</a>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.RecentUsers != null && Model.RecentUsers.Any())
+                    {
+                        @foreach (var user in Model.RecentUsers)
+                        {
+                            <tr>
+                                <td>@user.FullName</td>
+                                <td>@user.Email</td>
+                                <td><span class="badge bg-secondary">@user.Role</span></td>
+                                <td>
+                                    @{
+                                        var statusClass = user.Status switch
+                                        {
+                                            titans_admin.Models.Enums.UserStatus.Active => "badge-status-active",
+                                            titans_admin.Models.Enums.UserStatus.Inactive => "badge-status-inactive",
+                                            titans_admin.Models.Enums.UserStatus.Suspended => "badge-status-suspended",
+                                            _ => "badge-status-pending"
+                                        };
+                                    }
+                                    <span class="badge @statusClass">@user.Status</span>
+                                </td>
+                                <td class="small text-muted">@user.CreatedAt.ToString("MMM dd, yyyy")</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center py-4 text-muted">
+                                No users found. <a asp-action="CreateUser">Create the first user</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,135 @@
+@model titans_admin.Models.ViewModels.TradeLicenseEditViewModel
+@{
+    ViewData["Title"] = "Edit Trade License";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var users = ViewBag.Users as List<titans_admin.Models.ViewModels.UserListItemViewModel>;
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="h2 mb-3">Edit Trade License</h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">License Details</h6>
+                </div>
+                <div class="card-body">
+                    <form asp-action="EditTradeLicense" method="post">
+                        <input type="hidden" asp-for="TradeLicenseId" />
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="UserId" class="form-label">Business Owner</label>
+                            <select asp-for="UserId" class="form-select">
+                                <option value="">-- Select Business Owner --</option>
+                                @if (users != null)
+                                {
+                                    foreach (var user in users.Where(u => u.Role == titans_admin.Models.Enums.UserRole.Business))
+                                    {
+                                        <option value="@user.UserId">@user.FullName (@user.Username)</option>
+                                    }
+                                }
+                            </select>
+                            <span asp-validation-for="UserId" class="text-danger"></span>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="LicenseNumber" class="form-label"></label>
+                                <input asp-for="LicenseNumber" class="form-control" />
+                                <span asp-validation-for="LicenseNumber" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="BusinessType" class="form-label"></label>
+                                <select asp-for="BusinessType" class="form-select">
+                                    <option value="">-- Select Type --</option>
+                                    <option value="Import">Import</option>
+                                    <option value="Export">Export</option>
+                                    <option value="Import/Export">Import/Export</option>
+                                    <option value="Local">Local Trade</option>
+                                </select>
+                                <span asp-validation-for="BusinessType" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="BusinessName" class="form-label"></label>
+                            <input asp-for="BusinessName" class="form-control" />
+                            <span asp-validation-for="BusinessName" class="text-danger"></span>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="IssueDate" class="form-label"></label>
+                                <input asp-for="IssueDate" class="form-control" type="date" />
+                                <span asp-validation-for="IssueDate" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="ExpiryDate" class="form-label"></label>
+                                <input asp-for="ExpiryDate" class="form-control" type="date" />
+                                <span asp-validation-for="ExpiryDate" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Status" class="form-label"></label>
+                            <select asp-for="Status" class="form-select">
+                                <option value="Pending">Pending</option>
+                                <option value="Active">Active</option>
+                                <option value="Expired">Expired</option>
+                                <option value="Suspended">Suspended</option>
+                            </select>
+                            <span asp-validation-for="Status" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Notes" class="form-label"></label>
+                            <textarea asp-for="Notes" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Notes" class="text-danger"></span>
+                        </div>
+
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Update License
+                            </button>
+                            <a asp-action="TradeLicenses" class="btn btn-secondary">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 bg-warning text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Update Notice
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p class="small">
+                        You are editing an existing trade license. Changes will be saved immediately and may affect compliance status.
+                    </p>
+                    
+                    <h6 class="font-weight-bold mb-2 mt-3">Important:</h6>
+                    <ul class="small">
+                        <li>Changing license number may affect tracking</li>
+                        <li>Updating status to "Suspended" will block user access</li>
+                        <li>Expiry date changes may trigger notifications</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,98 @@
+@model List<titans_admin.Models.ViewModels.AuditLogViewModel>
+@{
+    ViewData["Title"] = "Audit Logs";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var currentPage = ViewBag.CurrentPage ?? 1;
+}
+
+<div class="mb-4">
+    <h4 class="mb-1">Audit Logs</h4>
+    <p class="text-muted small mb-0">System activity history</p>
+</div>
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span>Activity Log</span>
+        <input type="text" id="searchInput" class="form-control form-control-sm" style="max-width: 250px;" placeholder="Search...">
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0" id="logsTable">
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>User</th>
+                        <th>Action</th>
+                        <th>Resource</th>
+                        <th>Details</th>
+                        <th>IP Address</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var log in Model)
+                        {
+                            <tr>
+                                <td class="small">
+                                    @log.Timestamp.ToString("MMM dd, yyyy")<br>
+                                    <span class="text-muted">@log.Timestamp.ToString("HH:mm:ss")</span>
+                                </td>
+                                <td>@(log.Username ?? "System")</td>
+                                <td><span class="badge bg-secondary">@log.Action</span></td>
+                                <td><code class="small">@log.Resource</code></td>
+                                <td class="small" style="max-width: 250px;">
+                                    @(string.IsNullOrEmpty(log.Details) ? "—" : 
+                                      (log.Details.Length > 60 ? log.Details.Substring(0, 60) + "..." : log.Details))
+                                </td>
+                                <td class="small text-muted">@(log.IpAddress ?? "—")</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center py-4 text-muted">
+                                No audit logs found.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    @if (Model != null && Model.Any())
+    {
+        <div class="card-footer d-flex justify-content-between align-items-center small">
+            <span class="text-muted">Showing @Model.Count records</span>
+            <nav>
+                <ul class="pagination pagination-sm mb-0">
+                    @if (currentPage > 1)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" asp-action="AuditLogs" asp-route-page="@(currentPage - 1)">Previous</a>
+                        </li>
+                    }
+                    <li class="page-item active"><span class="page-link">@currentPage</span></li>
+                    @if (Model.Count >= 50)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" asp-action="AuditLogs" asp-route-page="@(currentPage + 1)">Next</a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('searchInput').addEventListener('keyup', function() {
+            const search = this.value.toLowerCase();
+            document.querySelectorAll('#logsTable tbody tr').forEach(row => {
+                row.style.display = row.textContent.toLowerCase().includes(search) ? '' : 'none';
+            });
+        });
+    </script>
+}

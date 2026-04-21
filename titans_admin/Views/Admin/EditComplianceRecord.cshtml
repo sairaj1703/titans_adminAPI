@@ -1,0 +1,129 @@
+@model titans_admin.Models.ViewModels.ComplianceRecordEditViewModel
+@{
+    ViewData["Title"] = "Edit Compliance Record";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var programs = ViewBag.Programs as List<titans_admin.Models.ViewModels.TradeProgramListViewModel>;
+    var users = ViewBag.Users as List<titans_admin.Models.ViewModels.UserListItemViewModel>;
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="h2 mb-3">Edit Compliance Record</h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Compliance Review Details</h6>
+                </div>
+                <div class="card-body">
+                    <form asp-action="EditComplianceRecord" method="post">
+                        <input type="hidden" asp-for="ComplianceRecordId" />
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="TradeProgramId" class="form-label">Trade Program</label>
+                            <select asp-for="TradeProgramId" class="form-select">
+                                <option value="">-- Select Program --</option>
+                                @if (programs != null)
+                                {
+                                    foreach (var program in programs)
+                                    {
+                                        <option value="@program.TradeProgramId">@program.ProgramName</option>
+                                    }
+                                }
+                            </select>
+                            <span asp-validation-for="TradeProgramId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="ReviewedByUserId" class="form-label">Reviewed By (Officer)</label>
+                            <select asp-for="ReviewedByUserId" class="form-select">
+                                <option value="">-- Select Reviewer --</option>
+                                @if (users != null)
+                                {
+                                    foreach (var user in users.Where(u => u.Role == titans_admin.Models.Enums.UserRole.Compliance || u.Role == titans_admin.Models.Enums.UserRole.Officer))
+                                    {
+                                        <option value="@user.UserId">@user.FullName (@user.Role)</option>
+                                    }
+                                }
+                            </select>
+                            <span asp-validation-for="ReviewedByUserId" class="text-danger"></span>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="Result" class="form-label"></label>
+                                <select asp-for="Result" class="form-select" asp-items="Html.GetEnumSelectList<titans_admin.Models.Enums.ComplianceResult>()">
+                                    <option value="">-- Select Result --</option>
+                                </select>
+                                <span asp-validation-for="Result" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="ReviewDate" class="form-label"></label>
+                                <input asp-for="ReviewDate" class="form-control" type="date" />
+                                <span asp-validation-for="ReviewDate" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Findings" class="form-label"></label>
+                            <textarea asp-for="Findings" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Findings" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Recommendations" class="form-label"></label>
+                            <textarea asp-for="Recommendations" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Recommendations" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="FollowUpDate" class="form-label"></label>
+                            <input asp-for="FollowUpDate" class="form-control" type="date" />
+                            <span asp-validation-for="FollowUpDate" class="text-danger"></span>
+                        </div>
+
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Update Record
+                            </button>
+                            <a asp-action="ComplianceRecords" class="btn btn-secondary">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 bg-warning text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Update Notice
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p class="small">
+                        You are updating an existing compliance record. Changes will affect compliance metrics and dashboards.
+                    </p>
+                    
+                    <h6 class="font-weight-bold mb-2 mt-3">Important:</h6>
+                    <ul class="small">
+                        <li>Changing result affects violation counter</li>
+                        <li>Follow-up dates trigger tracking</li>
+                        <li>All changes are auditable</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

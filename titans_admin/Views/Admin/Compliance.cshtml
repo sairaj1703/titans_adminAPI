@@ -1,0 +1,167 @@
+@model titans_admin.Models.ViewModels.ComplianceTrackingViewModel
+@{
+    ViewData["Title"] = "Compliance Tracking";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="h2 mb-3">Compliance Tracking</h1>
+            <p class="text-muted">Monitor compliance status across the platform</p>
+        </div>
+    </div>
+
+    <!-- Compliance Summary Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Total Records
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalRecords</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clipboard-check fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Compliant
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.CompliantRecords</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-left-danger shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                Non-Compliant
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.NonCompliantRecords</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-exclamation-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Compliance Rate
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.ComplianceRate.ToString("F1")%</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-percentage fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Compliance Progress Bar -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h6 class="font-weight-bold text-primary mb-3">Overall Compliance Status</h6>
+                    <div class="progress" style="height: 30px;">
+                        @{
+                            var compliantPercent = Model.TotalRecords > 0 ? (Model.CompliantRecords * 100.0 / Model.TotalRecords) : 0;
+                            var nonCompliantPercent = Model.TotalRecords > 0 ? (Model.NonCompliantRecords * 100.0 / Model.TotalRecords) : 0;
+                            var underReviewPercent = Model.TotalRecords > 0 ? (Model.UnderReviewRecords * 100.0 / Model.TotalRecords) : 0;
+                        }
+                        <div class="progress-bar bg-success" role="progressbar" style="width: @compliantPercent%" 
+                             aria-valuenow="@compliantPercent" aria-valuemin="0" aria-valuemax="100">
+                            Compliant (@Model.CompliantRecords)
+                        </div>
+                        <div class="progress-bar bg-danger" role="progressbar" style="width: @nonCompliantPercent%" 
+                             aria-valuenow="@nonCompliantPercent" aria-valuemin="0" aria-valuemax="100">
+                            Non-Compliant (@Model.NonCompliantRecords)
+                        </div>
+                        <div class="progress-bar bg-warning" role="progressbar" style="width: @underReviewPercent%" 
+                             aria-valuenow="@underReviewPercent" aria-valuemin="0" aria-valuemax="100">
+                            Under Review (@Model.UnderReviewRecords)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Compliance Records -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Recent Compliance Records</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Program Name</th>
+                                    <th>Result</th>
+                                    <th>Review Date</th>
+                                    <th>Reviewed By</th>
+                                    <th>Findings</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var record in Model.RecentRecords)
+                                {
+                                    <tr>
+                                        <td>@record.ProgramName</td>
+                                        <td>
+                                            @{
+                                                var resultClass = record.Result switch
+                                                {
+                                                    titans_admin.Models.Enums.ComplianceResult.Compliant => "bg-success",
+                                                    titans_admin.Models.Enums.ComplianceResult.NonCompliant => "bg-danger",
+                                                    _ => "bg-warning"
+                                                };
+                                            }
+                                            <span class="badge @resultClass">@record.Result</span>
+                                        </td>
+                                        <td>@record.ReviewDate.ToString("yyyy-MM-dd")</td>
+                                        <td>@(record.ReviewedBy ?? "N/A")</td>
+                                        <td>@(record.Findings ?? "-")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

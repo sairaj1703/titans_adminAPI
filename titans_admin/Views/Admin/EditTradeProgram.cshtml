@@ -1,0 +1,121 @@
+@model titans_admin.Models.ViewModels.TradeProgramEditViewModel
+@{
+    ViewData["Title"] = "Edit Trade Program";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="h2 mb-3">Edit Trade Program</h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Program Details</h6>
+                </div>
+                <div class="card-body">
+                    <form asp-action="EditTradeProgram" method="post">
+                        <input type="hidden" asp-for="TradeProgramId" />
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="ProgramName" class="form-label"></label>
+                            <input asp-for="ProgramName" class="form-control" />
+                            <span asp-validation-for="ProgramName" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label"></label>
+                            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="ProgramType" class="form-label"></label>
+                                <select asp-for="ProgramType" class="form-select">
+                                    <option value="">-- Select Type --</option>
+                                    <option value="Export">Export</option>
+                                    <option value="Import">Import</option>
+                                    <option value="Development">Development</option>
+                                    <option value="Subsidy">Subsidy</option>
+                                    <option value="Incentive">Incentive</option>
+                                    <option value="Compliance">Compliance</option>
+                                </select>
+                                <span asp-validation-for="ProgramType" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Budget" class="form-label"></label>
+                                <input asp-for="Budget" class="form-control" type="number" step="0.01" />
+                                <span asp-validation-for="Budget" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="StartDate" class="form-label"></label>
+                                <input asp-for="StartDate" class="form-control" type="date" />
+                                <span asp-validation-for="StartDate" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="EndDate" class="form-label"></label>
+                                <input asp-for="EndDate" class="form-control" type="date" />
+                                <span asp-validation-for="EndDate" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Status" class="form-label"></label>
+                            <select asp-for="Status" class="form-select">
+                                <option value="Active">Active</option>
+                                <option value="Inactive">Inactive</option>
+                                <option value="Pending">Pending</option>
+                                <option value="Completed">Completed</option>
+                            </select>
+                            <span asp-validation-for="Status" class="text-danger"></span>
+                        </div>
+
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Update Program
+                            </button>
+                            <a asp-action="TradePrograms" class="btn btn-secondary">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 bg-warning text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Update Notice
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p class="small">
+                        Changes to this program will affect all associated compliance records and participating businesses.
+                    </p>
+                    
+                    <h6 class="font-weight-bold mb-2 mt-3">Important:</h6>
+                    <ul class="small">
+                        <li>Changing status may affect eligibility</li>
+                        <li>Budget updates should be documented</li>
+                        <li>Date changes may trigger notifications</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

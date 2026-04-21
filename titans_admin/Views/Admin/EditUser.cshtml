@@ -1,0 +1,170 @@
+@model titans_admin.Models.ViewModels.UserEditViewModel
+@{
+    ViewData["Title"] = "Edit User";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<!-- Page Header -->
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
+    <div class="mb-3 mb-md-0">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-1">
+                <li class="breadcrumb-item"><a asp-action="Index">Dashboard</a></li>
+                <li class="breadcrumb-item"><a asp-action="Users">Users</a></li>
+                <li class="breadcrumb-item active">Edit User</li>
+            </ol>
+        </nav>
+        <h1 class="h3 mb-0">
+            <i class="fas fa-user-edit me-2 text-primary"></i>
+            Edit User: @Model.Username
+        </h1>
+    </div>
+    <a asp-action="Users" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Back to Users
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0 fw-bold">
+                    <i class="fas fa-user me-2"></i>User Information
+                </h6>
+            </div>
+            <div class="card-body">
+                <form asp-action="EditUser" method="post">
+                    <input type="hidden" asp-for="UserId" />
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                    <!-- Basic Info Section -->
+                    <h6 class="text-muted mb-3 border-bottom pb-2">
+                        <i class="fas fa-id-card me-2"></i>Basic Information
+                    </h6>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <label asp-for="Username" class="form-label fw-medium">Username <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-at"></i></span>
+                                <input asp-for="Username" class="form-control">
+                            </div>
+                            <span asp-validation-for="Username" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Email" class="form-label fw-medium">Email <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                <input asp-for="Email" class="form-control">
+                            </div>
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <label asp-for="FirstName" class="form-label fw-medium">First Name <span class="text-danger">*</span></label>
+                            <input asp-for="FirstName" class="form-control">
+                            <span asp-validation-for="FirstName" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="LastName" class="form-label fw-medium">Last Name <span class="text-danger">*</span></label>
+                            <input asp-for="LastName" class="form-control">
+                            <span asp-validation-for="LastName" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <!-- Role & Status Section -->
+                    <h6 class="text-muted mb-3 border-bottom pb-2 mt-4">
+                        <i class="fas fa-user-tag me-2"></i>Role & Status
+                    </h6>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <label asp-for="Role" class="form-label fw-medium">Role <span class="text-danger">*</span></label>
+                            <select asp-for="Role" class="form-select" asp-items="Html.GetEnumSelectList<titans_admin.Models.Enums.UserRole>()">
+                            </select>
+                            <span asp-validation-for="Role" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Status" class="form-label fw-medium">Status <span class="text-danger">*</span></label>
+                            <select asp-for="Status" class="form-select" asp-items="Html.GetEnumSelectList<titans_admin.Models.Enums.UserStatus>()">
+                            </select>
+                            <span asp-validation-for="Status" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <!-- Contact Section -->
+                    <h6 class="text-muted mb-3 border-bottom pb-2 mt-4">
+                        <i class="fas fa-phone me-2"></i>Contact Information
+                    </h6>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <label asp-for="PhoneNumber" class="form-label fw-medium">Phone Number</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                <input asp-for="PhoneNumber" class="form-control">
+                            </div>
+                            <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Address" class="form-label fw-medium">Address</label>
+                        <textarea asp-for="Address" class="form-control" rows="2"></textarea>
+                        <span asp-validation-for="Address" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="d-flex flex-column flex-sm-row gap-2 pt-3 border-top">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Save Changes
+                        </button>
+                        <a asp-action="Users" class="btn btn-outline-secondary">
+                            <i class="fas fa-times me-2"></i>Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Side Panel -->
+    <div class="col-lg-4">
+        <div class="card bg-light border-0 mb-4">
+            <div class="card-body">
+                <h6 class="fw-bold mb-3">
+                    <i class="fas fa-info-circle me-2 text-primary"></i>User Details
+                </h6>
+                <table class="table table-sm table-borderless mb-0">
+                    <tr>
+                        <td class="text-muted">User ID:</td>
+                        <td class="fw-medium">#@Model.UserId</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Username:</td>
+                        <td class="fw-medium">@Model.Username</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="card border-warning">
+            <div class="card-body">
+                <h6 class="fw-bold mb-3">
+                    <i class="fas fa-exclamation-triangle me-2 text-warning"></i>Important Notes
+                </h6>
+                <ul class="small mb-0">
+                    <li class="mb-2">Changing the role will affect user permissions immediately.</li>
+                    <li class="mb-2">Setting status to <strong>Suspended</strong> will prevent user login.</li>
+                    <li>Password cannot be changed from this form.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

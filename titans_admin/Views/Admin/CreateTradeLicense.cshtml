@@ -1,0 +1,113 @@
+@model titans_admin.Models.ViewModels.TradeLicenseEditViewModel
+@{
+    ViewData["Title"] = "Create Trade License";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var users = ViewBag.Users as List<titans_admin.Models.ViewModels.UserListItemViewModel>;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-1 small">
+                <li class="breadcrumb-item"><a asp-action="Index">Dashboard</a></li>
+                <li class="breadcrumb-item"><a asp-action="TradeLicenses">Trade Licenses</a></li>
+                <li class="breadcrumb-item active">Create</li>
+            </ol>
+        </nav>
+        <h4 class="mb-0">Create Trade License</h4>
+    </div>
+    <a asp-action="TradeLicenses" class="btn btn-outline-secondary btn-sm">
+        <i class="fas fa-arrow-left me-1"></i>Back
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">License Details</div>
+            <div class="card-body">
+                <form asp-action="CreateTradeLicense" method="post">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger small"></div>
+
+                    <div class="alert alert-info small">
+                        <i class="fas fa-info-circle me-2"></i>
+                        License number will be automatically generated upon creation.
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="UserId" class="form-label">License Owner <span class="text-danger">*</span></label>
+                        <select asp-for="UserId" class="form-select">
+                            <option value="">-- Select Owner --</option>
+                            @if (users != null)
+                            {
+                                foreach (var user in users)
+                                {
+                                    <option value="@user.UserId">@user.FullName (@user.Email)</option>
+                                }
+                            }
+                        </select>
+                        <span asp-validation-for="UserId" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="BusinessName" class="form-label">Business Name <span class="text-danger">*</span></label>
+                        <input asp-for="BusinessName" class="form-control" placeholder="Enter business name">
+                        <span asp-validation-for="BusinessName" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="BusinessType" class="form-label">Business Type</label>
+                        <select asp-for="BusinessType" class="form-select">
+                            <option value="">-- Select Type --</option>
+                            <option value="Import">Import</option>
+                            <option value="Export">Export</option>
+                            <option value="Import/Export">Import/Export</option>
+                            <option value="Local">Local Trade</option>
+                            <option value="Retail">Retail</option>
+                            <option value="Wholesale">Wholesale</option>
+                        </select>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="IssueDate" class="form-label">Issue Date <span class="text-danger">*</span></label>
+                            <input asp-for="IssueDate" class="form-control" type="date">
+                            <span asp-validation-for="IssueDate" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="ExpiryDate" class="form-label">Expiry Date <span class="text-danger">*</span></label>
+                            <input asp-for="ExpiryDate" class="form-control" type="date">
+                            <span asp-validation-for="ExpiryDate" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Status" class="form-label">Status <span class="text-danger">*</span></label>
+                        <select asp-for="Status" class="form-select">
+                            <option value="Pending">Pending</option>
+                            <option value="Active">Active</option>
+                            <option value="Expired">Expired</option>
+                            <option value="Suspended">Suspended</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Notes" class="form-label">Notes</label>
+                        <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Optional notes"></textarea>
+                    </div>
+
+                    <div class="d-flex gap-2 pt-3 border-top">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i>Create License
+                        </button>
+                        <a asp-action="TradeLicenses" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
