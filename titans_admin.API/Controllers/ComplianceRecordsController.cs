@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using titans_admin.Models.ViewModels;
 using titans_admin.Services.Interfaces;
 
@@ -6,6 +7,7 @@ namespace titans_admin.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class ComplianceRecordsController(IAdminService adminService, ILogger<ComplianceRecordsController> logger) : ControllerBase
 {
     [HttpGet]

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using titans_admin.Models.ViewModels;
 using titans_admin.Services.Interfaces;
 
@@ -9,6 +10,7 @@ namespace titans_admin.API.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class TradeLicensesController(IAdminService adminService, ILogger<TradeLicensesController> logger) : ControllerBase
 {
     /// <summary>
@@ -17,6 +19,7 @@ public class TradeLicensesController(IAdminService adminService, ILogger<TradeLi
     /// <returns>List of all trade licenses</returns>
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<List<TradeLicenseListViewModel>>> GetAllTradeLicenses()
     {
@@ -39,6 +42,7 @@ public class TradeLicensesController(IAdminService adminService, ILogger<TradeLi
     /// <returns>Trade license details</returns>
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<TradeLicenseEditViewModel>> GetTradeLicenseById(int id)
@@ -58,7 +62,16 @@ public class TradeLicensesController(IAdminService adminService, ILogger<TradeLi
         }
     }
 
+    /// <summary>
+    /// Create a new trade license
+    /// </summary>
+    /// <param name="model">Trade license details</param>
+    /// <returns>Created trade license ID</returns>
     [HttpPost]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<int>> CreateTradeLicense([FromBody] TradeLicenseEditViewModel model)
     {
         try
@@ -80,7 +93,17 @@ public class TradeLicensesController(IAdminService adminService, ILogger<TradeLi
         }
     }
 
+    /// <summary>
+    /// Update an existing trade license
+    /// </summary>
+    /// <param name="id">Trade license ID</param>
+    /// <param name="model">Updated trade license details</param>
+    /// <returns>Success message</returns>
     [HttpPut("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> UpdateTradeLicense(int id, [FromBody] TradeLicenseEditViewModel model)
     {
         try
@@ -105,7 +128,16 @@ public class TradeLicensesController(IAdminService adminService, ILogger<TradeLi
         }
     }
 
+    /// <summary>
+    /// Delete a trade license
+    /// </summary>
+    /// <param name="id">Trade license ID to delete</param>
+    /// <returns>Success message</returns>
     [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> DeleteTradeLicense(int id)
     {
         try
@@ -124,7 +156,15 @@ public class TradeLicensesController(IAdminService adminService, ILogger<TradeLi
         }
     }
 
+    /// <summary>
+    /// Get trade licenses by status
+    /// </summary>
+    /// <param name="status">License status to filter by</param>
+    /// <returns>List of trade licenses matching the status</returns>
     [HttpGet("by-status/{status}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<List<TradeLicenseListViewModel>>> GetTradeLicensesByStatus(string status)
     {
         try

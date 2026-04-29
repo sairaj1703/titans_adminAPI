@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using titans_admin.Models.ViewModels;
 using titans_admin.Services.Interfaces;
 
@@ -9,6 +10,7 @@ namespace titans_admin.API.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class TradeProgramsController(IAdminService adminService, ILogger<TradeProgramsController> logger) : ControllerBase
 {
     /// <summary>
@@ -54,6 +56,10 @@ public class TradeProgramsController(IAdminService adminService, ILogger<TradePr
     }
 
     [HttpGet("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<TradeProgramEditViewModel>> GetTradeProgramById(int id)
     {
         try
@@ -71,7 +77,16 @@ public class TradeProgramsController(IAdminService adminService, ILogger<TradePr
         }
     }
 
+    /// <summary>
+    /// Create a new trade program
+    /// </summary>
+    /// <param name="model">Trade program details</param>
+    /// <returns>Created trade program ID</returns>
     [HttpPost]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<int>> CreateTradeProgram([FromBody] TradeProgramEditViewModel model)
     {
         try
@@ -93,7 +108,17 @@ public class TradeProgramsController(IAdminService adminService, ILogger<TradePr
         }
     }
 
+    /// <summary>
+    /// Update an existing trade program
+    /// </summary>
+    /// <param name="id">Trade program ID</param>
+    /// <param name="model">Updated trade program details</param>
+    /// <returns>Success message</returns>
     [HttpPut("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> UpdateTradeProgram(int id, [FromBody] TradeProgramEditViewModel model)
     {
         try
@@ -118,7 +143,16 @@ public class TradeProgramsController(IAdminService adminService, ILogger<TradePr
         }
     }
 
+    /// <summary>
+    /// Delete a trade program
+    /// </summary>
+    /// <param name="id">Trade program ID to delete</param>
+    /// <returns>Success message</returns>
     [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> DeleteTradeProgram(int id)
     {
         try
